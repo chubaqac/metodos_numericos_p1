@@ -7,6 +7,8 @@ global x
 global aproximacion_estado
 global aproximacion_valor
 
+
+#algunos ejemplos de como construir tu ecuacion
 # ecuacion= (x**3)+(4*(x**2))-10
 # ecuacion= sy.exp(x)+x
 # ecuacion= (x**2)+x-5
@@ -18,9 +20,13 @@ global aproximacion_valor
 
 x=sy.symbols("x")
 
-ecuacion= (x**3)+(3*x**2)-4
+#aca se tiene que construir tu ecuacion
+ecuacion= (x**3)+(4*(x**2))-10
 
+#TRUE: se activa para que los valores entregados sean aproximados
+#FALSE: se desactiva para que los valores entregados sean aproximados
 aproximacion_estado= False
+#numero de decimales a proximar
 aproximacion_valor= 9
 
 def aprox(valor):
@@ -75,6 +81,9 @@ def biseccion():
 	an= float(input("INTERVALO A INICIAL: "))
 	bn= float(input("INTERVALO B INICIAL: "))
 
+
+	#TRUE: se activa para que se detenga de forma automatica al ingresar tu valor de precision
+	#FALSE: se desactiva para que se detenga de forma automatica al ingresar tu valor de precision
 	modo_n= False
 
 	if(modo_n):
@@ -95,10 +104,17 @@ def biseccion():
 		# tabla.add_row([i+1,an,f_an,bn,f_bn,pn,f_pn])
 		tabla.add_row([i+1,aprox(an),aprox(f_an),aprox(bn),aprox(f_bn),aprox(pn),aprox(f_pn)])
 
-		if(xor(signo_boolean(f_an),signo_boolean(f_pn))):
-			an=pn
-		elif(xor(signo_boolean(f_bn),signo_boolean(f_pn))):
+		if(f_pn*f_bn >0):
 			bn=pn
+		elif(f_pn*f_an >0):
+			an=pn
+		else:
+			break
+
+		# if(xor(signo_boolean(f_an),signo_boolean(f_pn))):
+		# 	an=pn
+		# elif(xor(signo_boolean(f_bn),signo_boolean(f_pn))):
+		# 	bn=pn
 
 	print()
 	print("f(x)=",str_ecuacion)
@@ -114,6 +130,8 @@ def newton_raphson():
 	pn= float(input("INGRESE VALOR P INICIAL: "))
 	numero=int(input("INGRESE NUMERO DE INTERACION: "))
 
+	#TRUE: se activa para que se detenga de forma automatica al ingresar tu valor de precision
+	#FALSE: se desactiva para que se detenga de forma automatica al ingresar tu valor de precision
 	modo_precision= False
 	precision_valor= 0.0000001
 
@@ -196,6 +214,8 @@ def newton_raphson_modificado():
 	pn= float(input("INGRESE VALOR P INICIAL: "))
 	numero=int(input("INGRESE NUMERO DE INTERACION: "))
 
+	#TRUE: se activa para que se detenga de forma automatica al ingresar tu valor de precision
+	#FALSE: se desactiva para que se detenga de forma automatica al ingresar tu valor de precision
 	modo_precision= False
 	precision_valor= 0.0000001
 
@@ -224,19 +244,22 @@ def newton_raphson_modificado():
 
 
 def main():
-	while(True):
-		print("[1]: BISECCION | [2]: NEWTON RHAPSON | [3]: NEWTON MEJORADO | [4]: CHUTE INICIAL")
-		opcion=input("INGRESE OPCION: ")
-		if(opcion=="1"):
-			biseccion()
-		elif(opcion=="2"):
-			newton_raphson()
-		elif(opcion=="3"):
-			newton_raphson_modificado()
-		elif(opcion=="4"):
-			newton_raphson_chute_inicial()
-		else:
-			break
+	try:
+		while(True):
+			print("[1]: BISECCION | [2]: NEWTON RHAPSON | [3]: NEWTON MEJORADO | [4]: CHUTE INICIAL")
+			opcion=input("INGRESE OPCION: ")
+			if(opcion=="1"):
+				biseccion()
+			elif(opcion=="2"):
+				newton_raphson()
+			elif(opcion=="3"):
+				newton_raphson_modificado()
+			elif(opcion=="4"):
+				newton_raphson_chute_inicial()
+			else:
+				break
+	except:
+		print("UPS... ALGO SALIO MAL")
 
 if __name__ == "__main__":
 	main()
