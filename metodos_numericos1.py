@@ -27,7 +27,7 @@ global precision_estado
 x=sy.symbols("x")
 
 #aca se tiene que construir tu ecuacion
-ecuacion= (80*sy.exp(-2*x)+(20*sy.exp(-0.5*x))-93)
+ecuacion= (80*sy.exp(-2*x)+(20*sy.exp(-0.5*x))-93)+sy.sin(x)+sy.log(10*x)
 
 #CONFIGURACION PREDETERMINADA
 #TRUE: se activa para que los valores entregados sean aproximados
@@ -287,7 +287,7 @@ def main():
 		while(True):
 			print("ECUACION:",ecuacion)
 			print("[0]: INGRESAR ECUACION")
-			print("[1]: BISECCION | [2]: NEWTON RHAPSON | [3]: NEWTON MEJORADO | [4]: CHUTE INICIAL [5]: CONFIGURACION")
+			print("[1]: BISECCION | [2]: NEWTON RHAPSON | [3]: NEWTON MEJORADO | [4]: CHUTE INICIAL | [5]: CONFIGURACION")
 			opcion=input("INGRESE OPCION: ")
 			if(opcion=="1"):
 				biseccion()
@@ -308,7 +308,9 @@ def main():
 				break
 			print()
 	except:
+		print()
 		print("UPS... ALGO SALIO MAL")
+		input("PRESS ENTER TO EXIT")
 
 if __name__ == "__main__":
 	main()
