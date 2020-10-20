@@ -2,11 +2,14 @@ import math
 import sympy as sy
 from prettytable import PrettyTable
 
+__author__ = "prepuciano"
+__credits__ = ["prepuciano", "wilson"]
+
 global ecuacion
 global x
 global aproximacion_estado
 global aproximacion_valor
-
+global precision_estado
 
 #algunos ejemplos de como construir tu ecuacion
 # ecuacion= (x**3)+(4*(x**2))-10
@@ -17,17 +20,23 @@ global aproximacion_valor
 # ecuacion= (x**3)+(3*x**2)-4
 # ecuacion= x-sy.sin(2*x)
 # ecuacion= sy.exp(x)-x-1
+# ecuacion= (x**3)-x+1
+# ecuacion= (x**3)+(6*x**2)+(12*x)-(28)
+# ecuacion= (80*sy.exp(-2*x)+(20*sy.exp(-0.5*x))-93)
 
 x=sy.symbols("x")
 
 #aca se tiene que construir tu ecuacion
-ecuacion= (x**3)+(4*(x**2))-10
+ecuacion= (80*sy.exp(-2*x)+(20*sy.exp(-0.5*x))-93)
 
+#CONFIGURACION PREDETERMINADA
 #TRUE: se activa para que los valores entregados sean aproximados
 #FALSE: se desactiva para que los valores entregados sean aproximados
 aproximacion_estado= False
 #numero de decimales a proximar
-aproximacion_valor= 9
+aproximacion_valor= 8
+
+precision_estado= False
 
 def aprox(valor):
 	if(aproximacion_estado):
@@ -60,6 +69,8 @@ def solve(ecuacion,valor):
 
 
 def reemplazarMath(valor):
+	valor= str(valor)
+
 	valor= valor.replace("sin","math.sin")
 	valor= valor.replace("cos","math.cos")
 	valor= valor.replace("tan","math.tan")
@@ -75,8 +86,7 @@ def biseccion():
 	tabla = PrettyTable()
 	tabla.field_names = ["N", "an", "f(an)", "bn", "f(bn)","pn","f(pn)"]
 
-	str_ecuacion= str(ecuacion)
-	str_ecuacion= reemplazarMath(str_ecuacion)
+	str_ecuacion= reemplazarMath(ecuacion)
 
 	an= float(input("INTERVALO A INICIAL: "))
 	bn= float(input("INTERVALO B INICIAL: "))
@@ -84,16 +94,15 @@ def biseccion():
 
 	#TRUE: se activa para que se detenga de forma automatica al ingresar tu valor de precision
 	#FALSE: se desactiva para que se detenga de forma automatica al ingresar tu valor de precision
-	modo_n= False
+	precision_estado_biseccion= precision_estado
 
-	if(modo_n):
-		epsilon=float(input("INGRESAR EPSILON: "))
+	if(precision_estado_biseccion):
+		epsilon= float(input("INGRESAR EPSILON: "))
 		numero=((math.log((bn-an)/epsilon))/(math.log(2)))-1
 		print("N:",numero)
 		numero= round(numero)
-
 	else:
-		numero=int(input("NUMERO DE ITERACIONES: "))
+		numero=int(input("INGRESE NUMERO DE INTERACION: "))
 
 	for i in range(numero):
 		f_an= solve(str_ecuacion,an)
@@ -117,9 +126,8 @@ def biseccion():
 		# 	bn=pn
 
 	print()
-	print("f(x)=",str_ecuacion)
+	print("f(x)=",str(ecuacion))
 	print(tabla)
-	print()
 
 def newton_raphson():
 	tabla=PrettyTable()
@@ -128,18 +136,22 @@ def newton_raphson():
 	ecuacion_d1= sy.diff(ecuacion,x)
 
 	pn= float(input("INGRESE VALOR P INICIAL: "))
-	numero=int(input("INGRESE NUMERO DE INTERACION: "))
+	
 
 	#TRUE: se activa para que se detenga de forma automatica al ingresar tu valor de precision
 	#FALSE: se desactiva para que se detenga de forma automatica al ingresar tu valor de precision
-	modo_precision= False
-	precision_valor= 0.0000001
+	precision_estado_newton_raphson= precision_estado
 
-	str_ecuacion= str(ecuacion)
-	str_ecuacion= reemplazarMath(str_ecuacion)
+	if(precision_estado_newton_raphson):
+		# precision_valor= 0.0000001
+		precision_valor= float(input("INGRESAR VALOR PRECISION: "))
+		numero=100
+	else:
+		numero=int(input("INGRESE NUMERO DE INTERACION: "))
 
-	str_ecuacion_d1= str(ecuacion_d1)
-	str_ecuacion_d1= reemplazarMath(str_ecuacion_d1)
+	str_ecuacion= reemplazarMath(ecuacion)
+
+	str_ecuacion_d1= reemplazarMath(ecuacion_d1)
 
 	for i in range(numero+1):
 		if(i==0):
@@ -152,15 +164,14 @@ def newton_raphson():
 
 		tabla.add_row([i,aprox(pn),aprox(error)])
 
-		if(modo_precision):
+		if(precision_estado_newton_raphson):
 			if(error<precision_valor):
 				break
 
 	print()
-	print("f(x)=",str_ecuacion)
-	print("f'(x)=",str_ecuacion_d1)
+	print("f(x)=",str(ecuacion))
+	print("f'(x)=",str(ecuacion_d1))
 	print(tabla)
-	print()
 
 def newton_raphson_chute_inicial():
 	tabla=PrettyTable()
@@ -169,14 +180,11 @@ def newton_raphson_chute_inicial():
 	ecuacion_d1= sy.diff(ecuacion,x)
 	ecuacion_d2= sy.diff(ecuacion,x,x)
 
-	str_ecuacion= str(ecuacion)
-	str_ecuacion= reemplazarMath(str_ecuacion)
+	str_ecuacion= reemplazarMath(ecuacion)
 
-	str_ecuacion_d1= str(ecuacion_d1)
-	str_ecuacion_d1= reemplazarMath(str_ecuacion_d1)
+	str_ecuacion_d1= reemplazarMath(ecuacion_d1)
 
-	str_ecuacion_d2= str(ecuacion_d2)
-	str_ecuacion_d2= reemplazarMath(str_ecuacion_d2)
+	str_ecuacion_d2= reemplazarMath(ecuacion_d2)
 
 	an= float(input("INTERVALO A INICIAL: "))
 	bn= float(input("INTERVALO B INICIAL: "))
@@ -188,12 +196,10 @@ def newton_raphson_chute_inicial():
 		n=round((n+((bn-an)/numero)),1)
 
 	print()
-	print("f(x)=",str_ecuacion)
-	print("f'(x)=",str_ecuacion_d1)
-	print("f''(x)=",str_ecuacion_d2)
+	print("f(x)=",str(ecuacion))
+	print("f'(x)=",str(ecuacion_d1))
+	print("f''(x)=",str(ecuacion_d2))
 	print(tabla)
-	print()
-
 
 def newton_raphson_modificado():
 	tabla=PrettyTable()
@@ -202,22 +208,25 @@ def newton_raphson_modificado():
 	ecuacion_d1= sy.diff(ecuacion,x)
 	ecuacion_d2= sy.diff(ecuacion,x,x)
 
-	str_ecuacion= str(ecuacion)
-	str_ecuacion= reemplazarMath(str_ecuacion)
+	str_ecuacion= reemplazarMath(ecuacion)
 
-	str_ecuacion_d1= str(ecuacion_d1)
-	str_ecuacion_d1= reemplazarMath(str_ecuacion_d1)
+	str_ecuacion_d1= reemplazarMath(ecuacion_d1)
 
-	str_ecuacion_d2= str(ecuacion_d2)
-	str_ecuacion_d2= reemplazarMath(str_ecuacion_d2)
+	str_ecuacion_d2= reemplazarMath(ecuacion_d2)
 
 	pn= float(input("INGRESE VALOR P INICIAL: "))
-	numero=int(input("INGRESE NUMERO DE INTERACION: "))
+	
 
 	#TRUE: se activa para que se detenga de forma automatica al ingresar tu valor de precision
 	#FALSE: se desactiva para que se detenga de forma automatica al ingresar tu valor de precision
-	modo_precision= False
-	precision_valor= 0.0000001
+	precision_estado_newton_raphson_modificado= precision_estado
+	
+	if(precision_estado_newton_raphson_modificado):
+		# precision_valor= 1e-7
+		precision_valor= float(input("INGRESAR VALOR PRECISION: "))
+		numero=100
+	else:
+		numero=int(input("INGRESE NUMERO DE INTERACION: "))
 
 	for i in range(numero+1):
 		if(i==0):
@@ -231,22 +240,54 @@ def newton_raphson_modificado():
 		error=abs(pn-aux)
 		tabla.add_row([i,aprox(pn),aprox(error)])
 
-		if(modo_precision):
+		if(precision_estado_newton_raphson_modificado):
 			if(error<precision_valor):
 				break
 
 	print()
-	print("f(x)=",str_ecuacion)
-	print("f'(x)=",str_ecuacion_d1)
-	print("f''(x)=",str_ecuacion_d2)
+	print("f(x)=",str(ecuacion))
+	print("f'(x)=",str(ecuacion_d1))
+	print("f''(x)=",str(ecuacion_d2))
 	print(tabla)
-	print()
 
+def configuracion():
+	global aproximacion_estado, aproximacion_valor, precision_estado
+	
+	print("-------------------------")
+	print("APROXIMACION_ESTADO:",str(aproximacion_estado))
+	print("APROXIMACION_VALOR:",str(aproximacion_valor))
+	print("PRECISION_ESTADO:",str(precision_estado))
+	print("-------------------------")
+
+	print("[1]: APROXIMACION | [2]: PRECISION")
+	opt1= input("INGRESAR OPCION: ")
+	if(opt1=="1"):
+		print("[1]: ACTIVAR | [2]: DESACTIVAR")
+		opt2= input("INGRESAR OPCION: ")
+		if(opt2=="1"):
+			aproximacion_estado= True
+			opt3= int(input("INGRESAR NUMERO DE DECIMALES: "))
+			aproximacion_valor= opt3
+		elif(opt2=="2"):
+			aproximacion_estado= False
+
+	elif(opt1=="2"):
+		print("[1]: ACTIVAR | [2]: DESACTIVAR")
+		opt2= input("INGRESAR OPCION: ")
+		if(opt2=="1"):
+			precision_estado= True
+		elif(opt2=="2"):
+			precision_estado= False
+	else:
+		return
 
 def main():
+	global ecuacion
 	try:
 		while(True):
-			print("[1]: BISECCION | [2]: NEWTON RHAPSON | [3]: NEWTON MEJORADO | [4]: CHUTE INICIAL")
+			print("ECUACION:",ecuacion)
+			print("[0]: INGRESAR ECUACION")
+			print("[1]: BISECCION | [2]: NEWTON RHAPSON | [3]: NEWTON MEJORADO | [4]: CHUTE INICIAL [5]: CONFIGURACION")
 			opcion=input("INGRESE OPCION: ")
 			if(opcion=="1"):
 				biseccion()
@@ -256,8 +297,16 @@ def main():
 				newton_raphson_modificado()
 			elif(opcion=="4"):
 				newton_raphson_chute_inicial()
+			elif(opcion=="0"):
+				# ecuacion= (x**3)+(3*x**2)-4
+				# ecuacion= x-sin(2*x)
+				ecuacion_nuevo=input("INGRESAR ECUACION: ")
+				ecuacion= sy.parse_expr(ecuacion_nuevo)
+			elif(opcion=="5"):
+				configuracion()
 			else:
 				break
+			print()
 	except:
 		print("UPS... ALGO SALIO MAL")
 
