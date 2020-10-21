@@ -113,6 +113,12 @@ def biseccion():
 		# tabla.add_row([i+1,an,f_an,bn,f_bn,pn,f_pn])
 		tabla.add_row([i+1,aprox(an),aprox(f_an),aprox(bn),aprox(f_bn),aprox(pn),aprox(f_pn)])
 
+		#BUG: iteraba a pesar de que los 2 f_an y f_bn tenian el mismo signo
+		if(f_an*f_bn>0):
+			print()
+			print("SE DETUVO PORQUE f(an) y f(bn) MISMO SIGNO")
+			break
+
 		if(f_pn*f_bn >0):
 			bn=pn
 		elif(f_pn*f_an >0):
