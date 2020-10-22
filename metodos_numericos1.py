@@ -59,8 +59,10 @@ def signo_boolean(valor):
 def signo_string(valor):
 	if(valor>0):
 		return "+"
-	else:
+	elif(valor<0):
 		return "-"
+	else:
+		return "*"
 
 def solve(ecuacion,valor):
 	f = lambda x: eval(ecuacion)
@@ -287,13 +289,30 @@ def configuracion():
 	else:
 		return
 
+def multiderivada():
+	numero_derivada=int(input("INGRESAR NUMERO DE DERIVADAS: "))
+	numero_evaluar=int(input("INGRESE NUMERO PARA EVALUAR: "))
+
+	tabla=PrettyTable()
+	tabla.field_names = ["N°", "d/dx", "EVALUADO"]
+	ecuacion_d=ecuacion
+	for i in range(numero_derivada+1):
+		if(i==0):
+			tabla.add_row([i,ecuacion_d,solve(str(ecuacion_d),numero_evaluar)])
+			continue
+
+		ecuacion_d= sy.diff(ecuacion_d,x)
+		tabla.add_row([i,ecuacion_d,solve(str(ecuacion_d),numero_evaluar)])
+	print()	
+	print(tabla)
+
 def main():
 	global ecuacion
 	try:
 		while(True):
 			print("ECUACION:",ecuacion)
 			print("[0]: INGRESAR ECUACION")
-			print("[1]: BISECCION | [2]: NEWTON RHAPSON | [3]: NEWTON MEJORADO | [4]: CHUTE INICIAL | [5]: CONFIGURACION")
+			print("[1]: BISECCION | [2]: NEWTON RHAPSON | [3]: NEWTON MEJORADO | [4]: EXTRA")
 			opcion=input("INGRESE OPCION: ")
 			if(opcion=="1"):
 				biseccion()
@@ -302,14 +321,19 @@ def main():
 			elif(opcion=="3"):
 				newton_raphson_modificado()
 			elif(opcion=="4"):
-				newton_raphson_chute_inicial()
+				print("[1]: CHUTE INICIAL | [2]: DERIVAR | [3]: CONFIGURACION")
+				opcion1=input("INGRESE OPCION: ")
+				if(opcion1=="1"):
+					newton_raphson_chute_inicial()
+				elif(opcion1=="2"):
+					multiderivada()
+				elif(opcion1=="3"):
+					configuracion()
 			elif(opcion=="0"):
 				# ecuacion= (x**3)+(3*x**2)-4
 				# ecuacion= x-sin(2*x)
 				ecuacion_nuevo=input("INGRESAR ECUACION: ")
 				ecuacion= sy.parse_expr(ecuacion_nuevo)
-			elif(opcion=="5"):
-				configuracion()
 			else:
 				break
 			print()
