@@ -11,7 +11,7 @@ global aproximacion_estado
 global aproximacion_valor
 global precision_estado
 
-#algunoss ejemplos de como construir tu ecuacion
+#algunosss ejemplos de como construir tu ecuacion
 # ecuacion= (x**3)+(4*(x**2))-10
 # ecuacion= sy.exp(x)+x
 # ecuacion= (x**2)+x-5
